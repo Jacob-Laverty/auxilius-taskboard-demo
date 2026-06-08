@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Login } from './Login';
+import { Board } from './Board';
 
 function App() {
   const [username, setUsername] = useState<string | null>(() =>
@@ -18,12 +19,12 @@ function App() {
   }
 
   return (
-    <div>
-      <header>
+    <div className="app">
+      <header className="app-header">
         <h1>Task Board</h1>
-        <span>Signed in as {username}</span>
+        <span className="signed-in">Signed in as {username}</span>
       </header>
-      {/* Board (three columns) lands here next iteration. */}
+      <Board />
     </div>
   );
 }

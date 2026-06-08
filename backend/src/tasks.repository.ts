@@ -32,7 +32,7 @@ export async function createTask(
 ): Promise<Task> {
   const { rows } = await pool.query<Task>(
     `INSERT INTO tasks (title, description, status)
-     VALUES ($1, $2, $3, $4)
+     VALUES ($1, $2, $3)
      RETURNING ${RETURNING}`,
     [input.title, input.description ?? null, input.status ?? 'todo'],
   );

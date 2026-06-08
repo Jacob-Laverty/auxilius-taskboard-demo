@@ -22,6 +22,11 @@ export function createTasksRouter(pool: Pool, broadcaster: Broadcaster): Router 
     <P>(fn: (req: Request<P>, res: Response) => Promise<void>) =>
     (req: Request<P>, res: Response) => {
       fn(req, res).catch((err) => {
+        if (res.headersSent) {
+          // Response already started; can't change it. Log and bail.
+          console.error('error after response started:', err);
+          return;
+        }
         if (err instanceof ValidationError) {
           res.status(400).json({ error: err.message });
           return;

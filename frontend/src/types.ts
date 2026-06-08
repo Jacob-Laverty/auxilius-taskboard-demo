@@ -26,3 +26,8 @@ export const SOCKET_EVENTS = {
   TASK_UPDATED: 'task:updated',
   TASK_DELETED: 'task:deleted',
 } as const;
+
+// Legible ID shown in the UI, e.g. "TASK-1".
+export function formatTaskId(task: Pick<Task, 'task_number'>): string {
+  return `TASK-${task.task_number}`;
+}
