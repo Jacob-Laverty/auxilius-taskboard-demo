@@ -7,6 +7,7 @@ export const TASK_STATUSES: TaskStatus[] = ['todo', 'in_progress', 'done'];
 
 export interface Task {
   id: string;
+  task_number: number;
   title: string;
   description: string | null;
   status: TaskStatus;

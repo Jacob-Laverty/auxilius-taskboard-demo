@@ -13,6 +13,7 @@ export const STATUS_LABELS: Record<TaskStatus, string> = {
 
 export interface Task {
   id: string;
+  task_number: number;
   title: string;
   description: string | null;
   status: TaskStatus;

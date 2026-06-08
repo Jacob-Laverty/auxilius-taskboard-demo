@@ -1,13 +1,16 @@
 import express, { type Express, type Request, type Response } from 'express';
 import cors from 'cors';
+import type { Pool } from 'pg';
+import { getPool } from './db.js';
+import { createTasksRouter } from './tasks.router.js';
 
 /**
  * Build the Express app. No .listen() here on purpose: index.ts owns the
  * HTTP server + Socket.IO wiring, and tests import this factory directly.
  *
  * The broadcaster is injected so route handlers can emit real-time events
- * without app.ts depending on socket.io. For now it's a placeholder;
- * route handlers land in the next iteration.
+ * without app.ts depending on socket.io. The pool is injected so tests can
+ * pass a mock instead of a live database.
  */
 export interface Broadcaster {
   emit(event: string, payload: unknown): void;
@@ -18,7 +21,15 @@ export const noopBroadcaster: Broadcaster = {
   emit: () => {},
 };
 
-export function createApp(_broadcaster: Broadcaster = noopBroadcaster): Express {
+export interface CreateAppOptions {
+  pool?: Pool;
+  broadcaster?: Broadcaster;
+}
+
+export function createApp(options: CreateAppOptions = {}): Express {
+  const pool = options.pool ?? getPool();
+  const broadcaster = options.broadcaster ?? noopBroadcaster;
+
   const app = express();
 
   app.use(cors());
@@ -28,7 +39,7 @@ export function createApp(_broadcaster: Broadcaster = noopBroadcaster): Express 
     res.status(200).json({ status: 'ok' });
   });
 
-  // Task routes (GET/POST/PATCH/DELETE /tasks) get mounted here next iteration.
+  app.use('/tasks', createTasksRouter(pool, broadcaster));
 
   return app;
 }

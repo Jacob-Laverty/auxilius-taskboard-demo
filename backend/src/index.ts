@@ -19,7 +19,7 @@ const broadcaster: Broadcaster = {
   emit: (event, payload) => io.emit(event, payload),
 };
 
-const app = createApp(broadcaster);
+const app = createApp({ broadcaster });
 server.on('request', app);
 
 io.on('connection', (socket) => {
