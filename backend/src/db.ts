@@ -14,7 +14,6 @@ let pool: pg.Pool | null = null;
  * Connections only created when we use the pool
  */
 export function getPool(): pg.Pool {
-  console.log(process.env.DATABASE_URL)
   if (!pool) {
     pool = new Pool({
       connectionString: process.env.DATABASE_URL,

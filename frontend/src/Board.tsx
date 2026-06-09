@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import type { Task } from './types';
 import { TASK_STATUSES } from './types';
-import { taskState } from './taskState';
+import { useTaskState } from './useTaskState';
 import * as api from './api';
 import { BoardColumn } from './BoardColumn';
 import { CreateTaskForm } from './CreateTaskForm';
 
 export function Board() {
-  const { tasks, loading, error, recentlyChanged, connected } = taskState();
+  const { tasks, loading, error, recentlyChanged, connected } = useTaskState();
   const [actionError, setActionError] = useState<string | null>(null);
 
   // Mutations fire-and-forget over REST; the server's socket echo updates

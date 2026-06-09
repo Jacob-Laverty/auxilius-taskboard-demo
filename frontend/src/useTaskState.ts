@@ -22,7 +22,7 @@ interface TaskState {
  * even this client's own mutations come back via the socket, so we don't
  * optimistically update). Tracks recently-changed ids so the UI can flash them.
  */
-export function taskState(): TaskState {
+export function useTaskState(): TaskState {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -68,20 +68,24 @@ export function taskState(): TaskState {
     socket.on('connect', () => setConnected(true));
     socket.on('disconnect', () => setConnected(false));
 
-    socket.on(SOCKET_EVENTS.TASK_CREATED, (task: Task) => {
-      setTasks((prev) =>
-        prev.some((t) => t.id === task.id) ? prev : [...prev, task],
+    socket.on(SOCKET_EVENTS.TASK_CREATED, (newTask: Task) => {
+      // For all current Tasks check if the new task id is already in state
+      // if yes keep state of tasks as currentTasks...otherwise append the new task to the state list
+      setTasks((currentTasks) =>
+        currentTasks.some((currentTask) => currentTask.id === newTask.id) ? currentTasks : [...currentTasks, newTask],
       );
-      flash(task.id);
+      flash(newTask.id);
     });
 
-    socket.on(SOCKET_EVENTS.TASK_UPDATED, (task: Task) => {
-      setTasks((prev) => prev.map((t) => (t.id === task.id ? task : t)));
-      flash(task.id);
+    socket.on(SOCKET_EVENTS.TASK_UPDATED, (newTask: Task) => {
+      // For all currentTasks update the task object of the task that changed.
+      setTasks((currentTasks) => currentTasks.map((currentTask) => (currentTask.id === newTask.id ? newTask : currentTask)));
+      flash(newTask.id);
     });
 
     socket.on(SOCKET_EVENTS.TASK_DELETED, (payload: { id: string }) => {
-      setTasks((prev) => prev.filter((t) => t.id !== payload.id));
+      // Keep only tasks that do not match the id...the id indicates the tasks that have been deleted.
+      setTasks((currentTasks) => currentTasks.filter((currentTask) => currentTask.id !== payload.id));
     });
 
     const pending = timers.current;

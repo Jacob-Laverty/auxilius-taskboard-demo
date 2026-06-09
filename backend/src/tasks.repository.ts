@@ -1,3 +1,10 @@
+/*
+* This whole file really should be an ORM layer.
+* Queries in heredocs is bad
+* There's really no robust data coupling between the DB and our backend
+* As such we maintain this constant list of "RETURNING" data to guarantee
+* we're loading the whole object from the DB after every action...fine for a demo I suppose but yea..big shoutout here
+*/
 import type { Pool } from 'pg';
 import type { Task, TaskStatus } from './types.js';
 

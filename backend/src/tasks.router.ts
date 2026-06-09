@@ -18,6 +18,8 @@ export function createTasksRouter(pool: Pool, broadcaster: Broadcaster): Router 
   const router = Router();
 
   // Wrap async handlers so thrown errors hit the error middleware.
+  // This would be moved to a middleware.ts file but since we only have
+  // the single task resource we'll just keep it here.
   const wrap =
     <P>(fn: (req: Request<P>, res: Response) => Promise<void>) =>
     (req: Request<P>, res: Response) => {
